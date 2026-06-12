@@ -39,7 +39,7 @@
       "datasource": {
         "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "anomaly-calculator"
       },
       "description": "Baselines provide upper and lower bands around time series data to identify anomalies. Values that remain outside the bands for significant periods of time will be identified as anomalies.",
       "fieldConfig": {
@@ -261,9 +261,9 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\", anomaly_select=\"\", anomaly_strategy=\"$anomaly_strategy\"}",
+          "expr": "{anomaly_name!=\"\", job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\", anomaly_select=\"\", anomaly_strategy=~\"$anomaly_strategy\"}",
           "hide": false,
-          "legendFormat": "{{anomaly_name}}",
+          "legendFormat": "{{anomaly_name}} {{job}} {{anomaly_strategy}}",
           "range": true,
           "refId": "A"
         },
@@ -273,7 +273,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:lower_band{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"$anomaly_strategy\", instance=~\"$instance\"}[2m])",
+          "expr": "last_over_time(anomaly:lower_band{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=~\"$anomaly_strategy\", instance=~\"$instance\"}[2m])",
           "hide": false,
           "instant": false,
           "legendFormat": "anomaly_lower_band",
@@ -286,7 +286,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:upper_band{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"$anomaly_strategy\", instance=~\"$instance\"}[2m])",
+          "expr": "last_over_time(anomaly:upper_band{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=~\"$anomaly_strategy\", instance=~\"$instance\"}[2m])",
           "hide": false,
           "instant": false,
           "legendFormat": "anomaly_upper_band",
@@ -296,10 +296,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "anomaly-calculator"
           },
           "editorMode": "code",
-          "expr": "ALERTS{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"$anomaly_strategy\", instance=~\"$instance\", alertstate=\"firing\", anomaly_select=\"1\"}",
+          "expr": "ALERTS{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=~\"$anomaly_strategy\", instance=~\"$instance\", alertstate=\"firing\", anomaly_select=\"1\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "anomalies",
@@ -309,10 +309,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "anomaly-calculator"
           },
           "editorMode": "code",
-          "expr": "anomaly:level{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\", anomaly_strategy=\"$anomaly_strategy\"}",
+          "expr": "anomaly:level{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\", anomaly_strategy=~\"$anomaly_strategy\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "level",
@@ -332,16 +332,17 @@
     "list": [
       {
         "current": {
-          "text": "frontend",
-          "value": "frontend"
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
         "definition": "label_values({anomaly_name=~\".+\"},job)",
         "description": "",
-        "includeAll": false,
+        "includeAll": true,
         "label": "job",
         "name": "job",
         "options": [],
@@ -352,76 +353,86 @@
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       },
       {
         "current": {
-          "text": "otel_demo_requests",
-          "value": "otel_demo_requests"
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
-        "definition": "label_values({job=\"$job\"},anomaly_name)",
-        "includeAll": false,
+        "definition": "label_values({anomaly_name!=\"\", job=~\"$job\"},anomaly_name)",
+        "includeAll": true,
         "name": "anomaly_name",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({job=\"$job\"},anomaly_name)",
+          "query": "label_values({anomaly_name!=\"\", job=~\"$job\"},anomaly_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       },
       {
         "current": {
-          "text": "adaptive",
-          "value": "adaptive"
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
-        "definition": "label_values({job=\"$job\"},anomaly_strategy)",
+        "definition": "label_values({anomaly_name!=\"\", job=~\"$job\"},anomaly_strategy)",
         "includeAll": true,
         "label": "anomaly_strategy",
         "name": "anomaly_strategy",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({job=\"$job\"},anomaly_strategy)",
+          "query": "label_values({anomaly_name!=\"\", job=~\"$job\"},anomaly_strategy)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       },
       {
         "current": {
-          "isNone": true,
-          "text": "None",
-          "value": ""
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
-        "definition": "label_values({job=\"$job\", anomaly_name=\"$anomaly_name\"},instance)",
-        "includeAll": false,
+        "definition": "label_values({anomaly_name!=\"\", job=~\"$job\", anomaly_name=~\"$anomaly_name\"},instance)",
+        "includeAll": true,
         "label": "instance",
         "name": "instance",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({job=\"$job\", anomaly_name=\"$anomaly_name\"},instance)",
+          "query": "label_values({anomaly_name!=\"\", job=~\"$job\", anomaly_name=~\"$anomaly_name\"},instance)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       }
     ]
   },

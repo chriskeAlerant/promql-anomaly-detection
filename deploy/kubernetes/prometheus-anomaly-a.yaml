@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: anomaly-prometheus-a
+spec:
+  serviceName: anomaly-prometheus-a
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anomaly-prometheus
+      replica: anomaly-prometheus-a
+  template:
+    metadata:
+      labels:
+        app: anomaly-prometheus
+        replica: anomaly-prometheus-a
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v2.54.1
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --storage.tsdb.retention.time=15d
+            - --web.enable-remote-write-receiver
+            - --web.enable-lifecycle
+          ports:
+            - name: web
+              containerPort: 9090
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+            - name: rules
+              mountPath: /etc/prometheus/rules
+            - name: data
+              mountPath: /prometheus
+        - name: thanos-sidecar
+          image: quay.io/thanos/thanos:v0.36.1
+          args:
+            - sidecar
+            - --prometheus.url=http://localhost:9090
+            - --grpc-address=0.0.0.0:10901
+            - --http-address=0.0.0.0:10902
+          ports:
+            - name: grpc
+              containerPort: 10901
+            - name: sidecar-http
+              containerPort: 10902
+      volumes:
+        - name: config
+          configMap:
+            name: anomaly-prometheus-a-config
+        - name: rules
+          configMap:
+            name: anomaly-recording-rules
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi

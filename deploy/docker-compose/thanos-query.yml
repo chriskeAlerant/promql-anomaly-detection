@@ -1,0 +1,7 @@
+args:
+  - query
+  - --http-address=0.0.0.0:10902
+  - --grpc-address=0.0.0.0:10901
+  - --query.replica-label=replica
+  - --endpoint=anomaly-prometheus-a-sidecar:10901
+  - --endpoint=anomaly-prometheus-b-sidecar:10901

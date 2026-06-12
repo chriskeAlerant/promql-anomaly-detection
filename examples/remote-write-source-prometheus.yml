@@ -1,0 +1,18 @@
+remote_write:
+  - url: http://anomaly-prometheus-a:9090/api/v1/write
+    write_relabel_configs:
+      - source_labels: [__name__]
+        regex: "service:http_request_rate5m|service:http_error_rate5m|service:http_latency_p95|service:cpu_usage_ratio|service:memory_usage_bytes|service:queue_depth"
+        action: keep
+      - source_labels: [__name__]
+        regex: "anomaly:.*"
+        action: drop
+
+  - url: http://anomaly-prometheus-b:9090/api/v1/write
+    write_relabel_configs:
+      - source_labels: [__name__]
+        regex: "service:http_request_rate5m|service:http_error_rate5m|service:http_latency_p95|service:cpu_usage_ratio|service:memory_usage_bytes|service:queue_depth"
+        action: keep
+      - source_labels: [__name__]
+        regex: "anomaly:.*"
+        action: drop

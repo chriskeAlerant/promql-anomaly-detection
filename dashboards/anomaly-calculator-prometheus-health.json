@@ -1,0 +1,524 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.5
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "prometheus_rule_group_last_duration_seconds{replica=~\"$replica\"} / prometheus_rule_group_interval_seconds{replica=~\"$replica\"}",
+          "legendFormat": "{{replica}} {{rule_group}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Rule Duration / Interval",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "prometheus_rule_group_last_duration_seconds{replica=~\"$replica\"}",
+          "legendFormat": "duration {{replica}} {{rule_group}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "prometheus_rule_group_interval_seconds{replica=~\"$replica\"}",
+          "legendFormat": "interval {{replica}} {{rule_group}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Rule Duration And Interval",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "increase(prometheus_rule_evaluation_failures_total{replica=~\"$replica\"}[5m])",
+          "legendFormat": "{{replica}} {{rule_group}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Rule Evaluation Failures",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "rate(prometheus_engine_query_duration_seconds_count{replica=~\"$replica\"}[5m])",
+          "legendFormat": "{{replica}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Query Engine Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "histogram_quantile(0.95, sum by (replica, le) (rate(prometheus_engine_query_duration_seconds_bucket{replica=~\"$replica\"}[5m])))",
+          "legendFormat": "{{replica}} p95",
+          "refId": "A"
+        }
+      ],
+      "title": "Query Engine Duration p95",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 16
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "prometheus_tsdb_head_series{replica=~\"$replica\"}",
+          "legendFormat": "{{replica}}",
+          "refId": "A"
+        }
+      ],
+      "title": "TSDB Head Series",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 16
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "rate(prometheus_tsdb_head_samples_appended_total{replica=~\"$replica\"}[5m])",
+          "legendFormat": "{{replica}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Samples Appended",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 16
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "rate(prometheus_http_requests_total{handler=\"/api/v1/write\", replica=~\"$replica\"}[5m])",
+          "legendFormat": "requests {{replica}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "rate(prometheus_http_response_size_bytes_sum{handler=\"/api/v1/write\", replica=~\"$replica\"}[5m])",
+          "legendFormat": "response bytes {{replica}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Remote Write Receiver",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 24
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "rate(process_cpu_seconds_total{replica=~\"$replica\"}[5m])",
+          "legendFormat": "{{replica}}",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Seconds",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 24
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "process_resident_memory_bytes{replica=~\"$replica\"}",
+          "legendFormat": "rss {{replica}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "go_memstats_heap_alloc_bytes{replica=~\"$replica\"}",
+          "legendFormat": "heap {{replica}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 24
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "up{replica=~\"$replica\"}",
+          "legendFormat": "{{replica}} {{job}}",
+          "refId": "A"
+        }
+      ],
+      "title": "HA Replica Up",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": [
+    "anomaly",
+    "prometheus",
+    "health"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource",
+        "name": "DS_ANOMALY_CALCULATOR",
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "Anomaly Calculator",
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_ANOMALY_CALCULATOR}"
+        },
+        "definition": "label_values(up{cluster=\"anomaly-calculator\"}, replica)",
+        "includeAll": true,
+        "label": "Replica",
+        "multi": true,
+        "name": "replica",
+        "query": {
+          "query": "label_values(up{cluster=\"anomaly-calculator\"}, replica)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "Anomaly Calculator Prometheus Health",
+  "uid": "anomaly-calculator-prometheus-health",
+  "version": 1,
+  "weekStart": ""
+}

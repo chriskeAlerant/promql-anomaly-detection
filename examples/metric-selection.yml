@@ -1,0 +1,24 @@
+groups:
+  - name: AnomalyMetricSelectionExamples
+    interval: 1m
+    rules:
+      - record: service:http_request_rate5m
+        expr: sum by (service, environment) (rate(prometheus_http_requests_total[5m]))
+        labels:
+          anomaly_name: prometheus_http_requests
+          anomaly_type: requests
+          anomaly_strategy: adaptive
+
+      - record: service:http_error_rate5m
+        expr: sum by (service, environment) (rate(prometheus_http_requests_total{code=~"5.."}[5m]))
+        labels:
+          anomaly_name: prometheus_http_errors
+          anomaly_type: errors
+          anomaly_strategy: adaptive
+
+      - record: service:prometheus_engine_query_rate5m
+        expr: sum by (service, environment) (rate(prometheus_engine_query_duration_seconds_count[5m]))
+        labels:
+          anomaly_name: prometheus_engine_queries
+          anomaly_type: resource
+          anomaly_strategy: robust

@@ -1,7 +1,9 @@
 ## Rules
 
-Each yaml file in this folder implements a different anomaly detection strategy. Each strategy can contain as many recording and alerting rules
-as necessary, but 3 metrics including the `anomaly_strategy` label must be exposed:
+Each yaml file in this folder implements a different anomaly detection strategy. The default deployment loads only recording rules from
+`adaptive.yml` and `robust.yml`; alerting rules are intentionally kept out of the default anomaly Prometheus configuration.
+
+Each strategy can contain as many recording rules as necessary, but 3 metrics including the `anomaly_strategy` label must be exposed:
 
 - `anomaly:upper_band`: Represents the upper limit of the anomaly band.
 - `anomaly:lower_band`: Represents the lower limit of the anomaly band.
@@ -23,3 +25,8 @@ should include both `anomaly_strategy` and `anomaly_select`.
 ## Examples
 
 The examples folder shows how recording rules can be used to "tag" metrics to be processed by the anomaly detection framework.
+
+## Alerting examples
+
+Example alerting rules are archived in `rules/alerts/anomaly-alerts-example.yml`. They are not loaded by the default Docker Compose or
+Kubernetes anomaly Prometheus configurations.

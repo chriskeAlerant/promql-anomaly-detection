@@ -176,21 +176,3 @@ groups:
             "look_back", "1d", "", ""
             )
           )
-
-  - name: AnomalyAdaptiveAlerts
-    rules:
-
-      ################################################################
-      #                     Anomalies                                #
-      ################################################################
-
-      # Alert for anomalies based on standard deviation
-      - alert: AnomalyDetected
-        for: 5m
-        expr: >
-          last_over_time(anomaly:level[2m]) < last_over_time(anomaly:lower_band{anomaly_strategy="adaptive"}[2m])
-          or
-          last_over_time(anomaly:level[2m]) > last_over_time(anomaly:upper_band{anomaly_strategy="adaptive"}[2m])
-        labels:
-          severity: warning
-          anomaly_strategy: adaptive

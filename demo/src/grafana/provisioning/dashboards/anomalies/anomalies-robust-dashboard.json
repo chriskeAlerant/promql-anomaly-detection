@@ -38,7 +38,7 @@
       "datasource": {
         "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "anomaly-calculator"
       },
       "description": "Baselines provide upper and lower bands around time series data to identify anomalies. Values that remain outside the bands for significant periods of time will be identified as anomalies.",
       "fieldConfig": {
@@ -264,8 +264,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:select{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:robust:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:robust:select",
           "range": true,
           "refId": "A"
         },
@@ -275,7 +275,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:lower_band{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}[2m])",
+          "expr": "last_over_time(anomaly:lower_band{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}[2m])",
           "hide": false,
           "instant": false,
           "legendFormat": "anomaly_lower_band",
@@ -288,7 +288,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:upper_band{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}[2m])",
+          "expr": "last_over_time(anomaly:upper_band{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}[2m])",
           "hide": false,
           "instant": false,
           "legendFormat": "anomaly_upper_band",
@@ -298,10 +298,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "anomaly-calculator"
           },
           "editorMode": "code",
-          "expr": "ALERTS{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\", alertstate=\"firing\", anomaly_select=\"1\"}",
+          "expr": "ALERTS{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\", alertstate=\"firing\", anomaly_select=\"1\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "anomalies",
@@ -311,10 +311,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "anomaly-calculator"
           },
           "editorMode": "code",
-          "expr": "anomaly:level{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
+          "expr": "anomaly:level{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "level",
@@ -432,7 +432,7 @@
       "datasource": {
         "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "anomaly-calculator"
       },
       "description": "The level is a smoothed version of the original metric. It is calculated using the median over 1h. This helps ensure remove noise, as only persistent trend changes are considered. It typically introduces a 30 minute delay compared to the original metrics.",
       "fieldConfig": {
@@ -562,8 +562,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:select{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:robust:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:robust:select",
           "range": true,
           "refId": "A"
         },
@@ -573,7 +573,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:level{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
+          "expr": "anomaly:level{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "level",
@@ -588,7 +588,7 @@
       "datasource": {
         "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "anomaly-calculator"
       },
       "description": "The mid-line is calculated using the median over 24h. Baselines are defined above and below the mid-line.",
       "fieldConfig": {
@@ -708,8 +708,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:select{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:robust:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:robust:select",
           "range": true,
           "refId": "A"
         },
@@ -719,7 +719,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:median_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
+          "expr": "anomaly:robust:median_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "mid-line",
@@ -853,8 +853,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:select{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:robust:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:robust:select",
           "range": true,
           "refId": "A"
         },
@@ -864,7 +864,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:mad_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
+          "expr": "anomaly:robust:mad_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "mad",
@@ -879,7 +879,7 @@
       "datasource": {
         "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "anomaly-calculator"
       },
       "description": "The short term bands are calculating by first drawing a mid-line, and then using the MAD times a multiplier to draw the upper and lower bands. The mid-line is calculated using the median over 24h.",
       "fieldConfig": {
@@ -1041,8 +1041,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:select{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:robust:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:robust:select",
           "range": true,
           "refId": "A"
         },
@@ -1052,7 +1052,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:robust:median_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) + last_over_time(anomaly:robust:mad_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:robust:mad_multiplier",
+          "expr": "last_over_time(anomaly:robust:median_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) + last_over_time(anomaly:robust:mad_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:robust:mad_multiplier",
           "hide": false,
           "instant": false,
           "legendFormat": "short_term_upper_band",
@@ -1065,7 +1065,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:robust:median_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) - last_over_time(anomaly:robust:mad_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:robust:mad_multiplier",
+          "expr": "last_over_time(anomaly:robust:median_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) - last_over_time(anomaly:robust:mad_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:robust:mad_multiplier",
           "hide": false,
           "instant": false,
           "legendFormat": "short_term_lower_band",
@@ -1075,10 +1075,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "anomaly-calculator"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:median_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
+          "expr": "anomaly:robust:median_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "mid-line",
@@ -1247,8 +1247,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:select{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:robust:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:robust:select",
           "range": true,
           "refId": "A"
         },
@@ -1258,10 +1258,10 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:robust:median_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) - last_over_time(anomaly:robust:lower_band_margin{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m])",
+          "expr": "last_over_time(anomaly:robust:median_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) - last_over_time(anomaly:robust:lower_band_margin{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m])",
           "hide": false,
           "instant": false,
-          "legendFormat": "margin_lower_band",
+          "legendFormat": "anomaly_lower_band",
           "range": true,
           "refId": "B"
         },
@@ -1271,10 +1271,10 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:robust:median_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) + last_over_time(anomaly:robust:upper_band_margin{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m])",
+          "expr": "last_over_time(anomaly:robust:median_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) + last_over_time(anomaly:robust:upper_band_margin{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m])",
           "hide": false,
           "instant": false,
-          "legendFormat": "margin_upper_band",
+          "legendFormat": "anomaly_upper_band",
           "range": true,
           "refId": "C"
         }
@@ -1434,8 +1434,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:robust:select{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:robust:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"robust\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:robust:select",
           "range": true,
           "refId": "A"
         },
@@ -1445,7 +1445,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "max(last_over_time(anomaly:robust:upper_seasonality_band{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[10m])) by (anomaly_name)",
+          "expr": "max(last_over_time(anomaly:robust:upper_seasonality_band{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[10m])) by (anomaly_name)",
           "hide": false,
           "instant": false,
           "legendFormat": "seasonality_upper_band",
@@ -1458,7 +1458,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "min(last_over_time(anomaly:robust:lower_seasonality_band{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[10m])) by (anomaly_name)",
+          "expr": "min(last_over_time(anomaly:robust:lower_seasonality_band{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[10m])) by (anomaly_name)",
           "hide": false,
           "instant": false,
           "legendFormat": "seasonality_lower_band",
@@ -1478,16 +1478,17 @@
     "list": [
       {
         "current": {
-          "text": "imageprovider",
-          "value": "imageprovider"
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
         "definition": "label_values({anomaly_name=~\".+\"},job)",
         "description": "",
-        "includeAll": false,
+        "includeAll": true,
         "label": "job",
         "name": "job",
         "options": [],
@@ -1498,52 +1499,60 @@
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       },
       {
         "current": {
-          "text": "otel_demo_requests",
-          "value": "otel_demo_requests"
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
-        "definition": "label_values({job=\"$job\"},anomaly_name)",
-        "includeAll": false,
+        "definition": "label_values({anomaly_name!=\"\", job=~\"$job\"},anomaly_name)",
+        "includeAll": true,
         "name": "anomaly_name",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({job=\"$job\"},anomaly_name)",
+          "query": "label_values({anomaly_name!=\"\", job=~\"$job\"},anomaly_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       },
       {
         "current": {
-          "text": "",
-          "value": ""
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
-        "definition": "label_values({job=\"$job\", anomaly_name=\"$anomaly_name\"},instance)",
-        "includeAll": false,
+        "definition": "label_values({anomaly_name!=\"\", job=~\"$job\", anomaly_name=~\"$anomaly_name\"},instance)",
+        "includeAll": true,
         "label": "instance",
         "name": "instance",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({job=\"$job\", anomaly_name=\"$anomaly_name\"},instance)",
+          "query": "label_values({anomaly_name!=\"\", job=~\"$job\", anomaly_name=~\"$anomaly_name\"},instance)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       }
     ]
   },

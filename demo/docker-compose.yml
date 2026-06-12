@@ -222,8 +222,8 @@ services:
     image: promql-anomaly-detection-frontendproxy
     container_name: frontend-proxy
     build:
-      context: ./
-      dockerfile: ${FRONTEND_PROXY_DOCKERFILE}
+      context: ${DEMO_ROOT:-.}
+      dockerfile: src/frontendproxy/Dockerfile
     deploy:
       resources:
         limits:
@@ -456,7 +456,7 @@ services:
     ports:
       - 8013
     volumes:
-      - ./src/flagd:/etc/flagd
+      - ${DEMO_ROOT:-.}/src/flagd:/etc/flagd
     logging:
       *logging
 
@@ -478,24 +478,6 @@ services:
   # ********************
   # Telemetry Components
   # ********************
-
-  # Grafana
-  grafana:
-    image: ${GRAFANA_IMAGE}
-    container_name: grafana
-    deploy:
-      resources:
-        limits:
-          memory: 100M
-    restart: unless-stopped
-    environment:
-      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
-    volumes:
-      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
-    ports:
-      - "${GRAFANA_SERVICE_PORT}"
-    logging: *logging
 
   # OpenTelemetry Collector
   otelcol:
@@ -523,33 +505,6 @@ services:
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
-
-  # Prometheus
-  prometheus:
-    image: ${PROMETHEUS_IMAGE}
-    container_name: prometheus
-    command:
-      - --web.console.templates=/etc/prometheus/consoles
-      - --web.console.libraries=/etc/prometheus/console_libraries
-      - --storage.tsdb.retention.time=15d
-      - --config.file=/etc/prometheus/prometheus-config.yaml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
-      - --web.route-prefix=/prometheus/
-      - --web.external-url=/prometheus/
-      - --enable-feature=exemplar-storage
-      - --enable-feature=otlp-write-receiver
-    volumes:
-      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
-      - ../rules:/etc/prometheus/rules
-    deploy:
-      resources:
-        limits:
-          memory: 300M
-    restart: unless-stopped
-    ports:
-      - "${PROMETHEUS_SERVICE_PORT}"
-    logging: *logging
 
   # Node Exporter
   node_exporter:

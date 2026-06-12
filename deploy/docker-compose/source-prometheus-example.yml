@@ -1,0 +1,51 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 1m
+
+rule_files:
+  - /etc/prometheus/metric-selection.yml
+
+scrape_configs:
+  - job_name: source-prometheus
+    metrics_path: /prometheus/metrics
+    static_configs:
+      - targets:
+          - localhost:9090
+        labels:
+          service: source-prometheus
+          environment: local
+
+  - job_name: otel-collector
+    static_configs:
+      - targets:
+          - otelcol:8888
+        labels:
+          service: otel-collector
+          environment: local
+
+  - job_name: node_exporter
+    static_configs:
+      - targets:
+          - node_exporter:9100
+        labels:
+          service: node-exporter
+          environment: local
+
+remote_write:
+  - url: http://anomaly-prometheus-a:9090/api/v1/write
+    write_relabel_configs:
+      - source_labels: [__name__]
+        regex: "service:http_request_rate5m|service:http_error_rate5m|service:prometheus_engine_query_rate5m|traces_span_metrics_duration_milliseconds_count|traces_span_metrics_duration_milliseconds_bucket|traces_span_metrics_calls_total|node_cpu_seconds_total|node_memory_MemAvailable_bytes|node_memory_MemTotal_bytes"
+        action: keep
+      - source_labels: [__name__]
+        regex: "anomaly:.*"
+        action: drop
+
+  - url: http://anomaly-prometheus-b:9090/api/v1/write
+    write_relabel_configs:
+      - source_labels: [__name__]
+        regex: "service:http_request_rate5m|service:http_error_rate5m|service:prometheus_engine_query_rate5m|traces_span_metrics_duration_milliseconds_count|traces_span_metrics_duration_milliseconds_bucket|traces_span_metrics_calls_total|node_cpu_seconds_total|node_memory_MemAvailable_bytes|node_memory_MemTotal_bytes"
+        action: keep
+      - source_labels: [__name__]
+        regex: "anomaly:.*"
+        action: drop

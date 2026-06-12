@@ -38,7 +38,7 @@
       "datasource": {
         "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "anomaly-calculator"
       },
       "description": "Baselines provide upper and lower bands around time series data to identify anomalies. Values that remain outside the bands for significant periods of time will be identified as anomalies.",
       "fieldConfig": {
@@ -239,8 +239,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:select{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:adaptive:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:adaptive:select",
           "range": true,
           "refId": "A"
         },
@@ -250,7 +250,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:lower_band{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"adaptive\", instance=~\"$instance\"}[2m])",
+          "expr": "last_over_time(anomaly:lower_band{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"adaptive\", instance=~\"$instance\"}[2m])",
           "hide": false,
           "instant": false,
           "legendFormat": "anomaly_lower_band",
@@ -263,7 +263,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:upper_band{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"adaptive\", instance=~\"$instance\"}[2m])",
+          "expr": "last_over_time(anomaly:upper_band{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"adaptive\", instance=~\"$instance\"}[2m])",
           "hide": false,
           "instant": false,
           "legendFormat": "anomaly_upper_band",
@@ -273,10 +273,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "anomaly-calculator"
           },
           "editorMode": "code",
-          "expr": "ALERTS{job=\"$job\", anomaly_name=\"$anomaly_name\", anomaly_strategy=\"adaptive\", instance=~\"$instance\", alertstate=\"firing\", anomaly_select=\"1\"}",
+          "expr": "ALERTS{job=~\"$job\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=\"adaptive\", instance=~\"$instance\", alertstate=\"firing\", anomaly_select=\"1\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "anomalies",
@@ -407,7 +407,7 @@
       "datasource": {
         "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "anomaly-calculator"
       },
       "description": "The mid-line is calculated using a moving average over a 1 hour time window. It follows the trend while removing noise. Baselines are defined above and below the mid-line.",
       "fieldConfig": {
@@ -527,8 +527,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:select{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:adaptive:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:adaptive:select",
           "range": true,
           "refId": "A"
         },
@@ -538,7 +538,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:avg_1h{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
+          "expr": "anomaly:adaptive:avg_1h{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "avg_1h",
@@ -672,8 +672,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:select{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:adaptive:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:adaptive:select",
           "range": true,
           "refId": "A"
         },
@@ -683,7 +683,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:stddev_1h:filtered{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
+          "expr": "anomaly:adaptive:stddev_1h:filtered{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "stddev_1h_filtered",
@@ -832,8 +832,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:select{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:adaptive:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:adaptive:select",
           "range": true,
           "refId": "A"
         },
@@ -843,7 +843,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:stddev_st{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
+          "expr": "anomaly:adaptive:stddev_st{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
           "hide": false,
           "instant": false,
           "legendFormat": "stddev_1h_over_26h",
@@ -858,7 +858,7 @@
       "datasource": {
         "default": true,
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "anomaly-calculator"
       },
       "description": "The smoothed filtered standard deviation is used to calculate the final short term upper and lower bands. This is done by scaling it by a certain factor and adding it to (or subtracting it from) the mid-line.",
       "fieldConfig": {
@@ -1013,8 +1013,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:select{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:adaptive:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:adaptive:select",
           "range": true,
           "refId": "A"
         },
@@ -1024,7 +1024,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:adaptive:avg_1h{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) + last_over_time(anomaly:adaptive:stddev_st{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:adaptive:stddev_multiplier",
+          "expr": "last_over_time(anomaly:adaptive:avg_1h{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) + last_over_time(anomaly:adaptive:stddev_st{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:adaptive:stddev_multiplier",
           "hide": false,
           "instant": false,
           "legendFormat": "short_term_upper_band",
@@ -1037,7 +1037,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:adaptive:avg_1h{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) - last_over_time(anomaly:adaptive:stddev_st{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:adaptive:stddev_multiplier",
+          "expr": "last_over_time(anomaly:adaptive:avg_1h{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) - last_over_time(anomaly:adaptive:stddev_st{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:adaptive:stddev_multiplier",
           "hide": false,
           "instant": false,
           "legendFormat": "short_term_lower_band",
@@ -1206,8 +1206,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:select{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:adaptive:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:adaptive:select",
           "range": true,
           "refId": "A"
         },
@@ -1217,7 +1217,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:adaptive:avg_1h{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) - last_over_time(anomaly:adaptive:avg_1h{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:adaptive:margin_multiplier",
+          "expr": "last_over_time(anomaly:adaptive:avg_1h{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) - last_over_time(anomaly:adaptive:avg_1h{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:adaptive:margin_multiplier",
           "hide": false,
           "instant": false,
           "legendFormat": "margin_lower_band",
@@ -1230,7 +1230,7 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "last_over_time(anomaly:adaptive:avg_1h{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) + last_over_time(anomaly:adaptive:avg_1h{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:adaptive:margin_multiplier",
+          "expr": "last_over_time(anomaly:adaptive:avg_1h{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) + last_over_time(anomaly:adaptive:avg_1h{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[2m]) * on() group_left anomaly:adaptive:margin_multiplier",
           "hide": false,
           "instant": false,
           "legendFormat": "margin_upper_band",
@@ -1433,8 +1433,8 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "anomaly:adaptive:select{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}",
-          "legendFormat": "{{anomaly_name}}",
+          "expr": "anomaly:adaptive:select{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}",
+          "legendFormat": "anomaly:adaptive:select",
           "range": true,
           "refId": "A"
         },
@@ -1444,10 +1444,10 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "max(last_over_time(anomaly:adaptive:upper_band_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[10m])) by (anomaly_name)",
+          "expr": "max(last_over_time(anomaly:adaptive:upper_band_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[10m])) by (anomaly_name)",
           "hide": false,
           "instant": false,
-          "legendFormat": "long_term_upper_band",
+          "legendFormat": "anomaly_upper_band",
           "range": true,
           "refId": "B"
         },
@@ -1457,10 +1457,10 @@
             "uid": "default"
           },
           "editorMode": "code",
-          "expr": "min(last_over_time(anomaly:adaptive:lower_band_lt{job=\"$job\", anomaly_name=\"$anomaly_name\", instance=~\"$instance\"}[10m])) by (anomaly_name)",
+          "expr": "min(last_over_time(anomaly:adaptive:lower_band_lt{job=~\"$job\", anomaly_name=~\"$anomaly_name\", instance=~\"$instance\"}[10m])) by (anomaly_name)",
           "hide": false,
           "instant": false,
-          "legendFormat": "long_term_lower_band",
+          "legendFormat": "anomaly_lower_band",
           "range": true,
           "refId": "C"
         }
@@ -1477,16 +1477,17 @@
     "list": [
       {
         "current": {
-          "text": "frontend",
-          "value": "frontend"
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
         "definition": "label_values({anomaly_name=~\".+\"},job)",
         "description": "",
-        "includeAll": false,
+        "includeAll": true,
         "label": "job",
         "name": "job",
         "options": [],
@@ -1497,53 +1498,60 @@
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       },
       {
         "current": {
-          "text": "otel_demo_requests",
-          "value": "otel_demo_requests"
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
-        "definition": "label_values({job=\"$job\"},anomaly_name)",
-        "includeAll": false,
+        "definition": "label_values({anomaly_name!=\"\", job=~\"$job\"},anomaly_name)",
+        "includeAll": true,
         "name": "anomaly_name",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({job=\"$job\"},anomaly_name)",
+          "query": "label_values({anomaly_name!=\"\", job=~\"$job\"},anomaly_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       },
       {
         "current": {
-          "isNone": true,
-          "text": "None",
-          "value": ""
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "anomaly-calculator"
         },
-        "definition": "label_values({job=\"$job\", anomaly_name=\"$anomaly_name\"},instance)",
-        "includeAll": false,
+        "definition": "label_values({anomaly_name!=\"\", job=~\"$job\", anomaly_name=~\"$anomaly_name\"},instance)",
+        "includeAll": true,
         "label": "instance",
         "name": "instance",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values({job=\"$job\", anomaly_name=\"$anomaly_name\"},instance)",
+          "query": "label_values({anomaly_name!=\"\", job=~\"$job\", anomaly_name=~\"$anomaly_name\"},instance)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       }
     ]
   },

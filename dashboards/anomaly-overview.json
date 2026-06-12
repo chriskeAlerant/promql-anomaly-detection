@@ -1,0 +1,354 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "lineWidth": 2,
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "anomaly:level{anomaly_strategy=~\"$strategy\", anomaly_name=~\"$anomaly_name\", service=~\"$service\", environment=~\"$environment\", job=~\"$job\", instance=~\"$instance\"}",
+          "legendFormat": "level {{anomaly_name}} {{service}} {{environment}} {{job}} {{instance}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "anomaly:upper_band{anomaly_strategy=~\"$strategy\", anomaly_name=~\"$anomaly_name\", service=~\"$service\", environment=~\"$environment\", job=~\"$job\", instance=~\"$instance\"}",
+          "legendFormat": "upper {{anomaly_name}} {{service}} {{environment}} {{job}} {{instance}}",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "anomaly:lower_band{anomaly_strategy=~\"$strategy\", anomaly_name=~\"$anomaly_name\", service=~\"$service\", environment=~\"$environment\", job=~\"$job\", instance=~\"$instance\"}",
+          "legendFormat": "lower {{anomaly_name}} {{service}} {{environment}} {{job}} {{instance}}",
+          "refId": "C"
+        }
+      ],
+      "title": "Anomaly Bands",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "lineWidth": 2,
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "{anomaly_name!=\"\", anomaly_name=~\"$anomaly_name\", anomaly_strategy=~\"$strategy\", anomaly_select=\"\", service=~\"$service\", environment=~\"$environment\", job=~\"$job\", instance=~\"$instance\"}",
+          "legendFormat": "source {{__name__}} {{anomaly_name}} {{service}} {{environment}} {{job}} {{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Source Metrics Available In Anomaly Datasource",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 21
+      },
+      "id": 3,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "count by (anomaly_strategy, anomaly_name, service, environment, job, instance) (anomaly:level)",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Active Anomaly Series",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_ANOMALY_CALCULATOR}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 21
+      },
+      "id": 4,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_ANOMALY_CALCULATOR}"
+          },
+          "expr": "count by (anomaly_strategy) (anomaly:upper_band)",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Series By Strategy",
+      "type": "table"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": [
+    "anomaly",
+    "thanos"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource",
+        "name": "DS_ANOMALY_CALCULATOR",
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "Anomaly Calculator",
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_ANOMALY_CALCULATOR}"
+        },
+        "definition": "label_values(anomaly:level, anomaly_strategy)",
+        "includeAll": true,
+        "label": "Strategy",
+        "multi": true,
+        "name": "strategy",
+        "query": {
+          "query": "label_values(anomaly:level, anomaly_strategy)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_ANOMALY_CALCULATOR}"
+        },
+        "definition": "label_values(anomaly:level, anomaly_name)",
+        "includeAll": true,
+        "label": "Anomaly",
+        "multi": true,
+        "name": "anomaly_name",
+        "query": {
+          "query": "label_values(anomaly:level, anomaly_name)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_ANOMALY_CALCULATOR}"
+        },
+        "definition": "label_values(anomaly:level, service)",
+        "includeAll": true,
+        "label": "Service",
+        "multi": true,
+        "name": "service",
+        "query": {
+          "query": "label_values(anomaly:level, service)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_ANOMALY_CALCULATOR}"
+        },
+        "definition": "label_values(anomaly:level, environment)",
+        "includeAll": true,
+        "label": "Environment",
+        "multi": true,
+        "name": "environment",
+        "query": {
+          "query": "label_values(anomaly:level, environment)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_ANOMALY_CALCULATOR}"
+        },
+        "definition": "label_values(anomaly:level, job)",
+        "includeAll": true,
+        "label": "Job",
+        "multi": true,
+        "name": "job",
+        "query": {
+          "query": "label_values(anomaly:level, job)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_ANOMALY_CALCULATOR}"
+        },
+        "definition": "label_values(anomaly:level, instance)",
+        "includeAll": true,
+        "label": "Instance",
+        "multi": true,
+        "name": "instance",
+        "query": {
+          "query": "label_values(anomaly:level, instance)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "Anomaly Overview",
+  "uid": "anomaly-overview",
+  "version": 1,
+  "weekStart": ""
+}

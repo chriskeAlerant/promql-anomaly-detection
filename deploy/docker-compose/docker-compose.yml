@@ -1,0 +1,123 @@
+networks:
+  default:
+    name: opentelemetry-demo
+    driver: bridge
+
+services:
+  source-prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+      - --web.enable-lifecycle
+      - --web.route-prefix=/prometheus/
+      - --web.external-url=/prometheus/
+      - --enable-feature=exemplar-storage
+      - --enable-feature=otlp-write-receiver
+    ports:
+      - "9090:9090"
+    networks:
+      default:
+        aliases:
+          - prometheus
+    volumes:
+      - ./source-prometheus-example.yml:/etc/prometheus/prometheus.yml:ro
+      - ${REPO_ROOT:-../..}/examples/metric-selection.yml:/etc/prometheus/metric-selection.yml:ro
+      - source-prometheus-data:/prometheus
+
+  anomaly-prometheus-a:
+    image: prom/prometheus:v2.54.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.enable-remote-write-receiver
+      - --web.enable-lifecycle
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./prometheus-anomaly-a.yml:/etc/prometheus/prometheus.yml:ro
+      - ${REPO_ROOT:-../..}/rules:/etc/prometheus/rules:ro
+      - anomaly-prometheus-a-data:/prometheus
+
+  anomaly-prometheus-b:
+    image: prom/prometheus:v2.54.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.enable-remote-write-receiver
+      - --web.enable-lifecycle
+    ports:
+      - "9092:9090"
+    volumes:
+      - ./prometheus-anomaly-b.yml:/etc/prometheus/prometheus.yml:ro
+      - ${REPO_ROOT:-../..}/rules:/etc/prometheus/rules:ro
+      - anomaly-prometheus-b-data:/prometheus
+
+  anomaly-prometheus-a-sidecar:
+    image: quay.io/thanos/thanos:v0.36.1
+    command:
+      - sidecar
+      - --prometheus.url=http://anomaly-prometheus-a:9090
+      - --grpc-address=0.0.0.0:10901
+      - --http-address=0.0.0.0:10902
+    depends_on:
+      - anomaly-prometheus-a
+
+  anomaly-prometheus-b-sidecar:
+    image: quay.io/thanos/thanos:v0.36.1
+    command:
+      - sidecar
+      - --prometheus.url=http://anomaly-prometheus-b:9090
+      - --grpc-address=0.0.0.0:10901
+      - --http-address=0.0.0.0:10902
+    depends_on:
+      - anomaly-prometheus-b
+
+  thanos-query:
+    image: quay.io/thanos/thanos:v0.36.1
+    command:
+      - query
+      - --http-address=0.0.0.0:10902
+      - --grpc-address=0.0.0.0:10901
+      - --query.replica-label=replica
+      - --endpoint=anomaly-prometheus-a-sidecar:10901
+      - --endpoint=anomaly-prometheus-b-sidecar:10901
+    ports:
+      - "10902:10902"
+    depends_on:
+      - anomaly-prometheus-a-sidecar
+      - anomaly-prometheus-b-sidecar
+
+  grafana:
+    image: grafana/grafana:11.1.4
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_INSTALL_PLUGINS: grafana-opensearch-datasource
+    volumes:
+      - ${REPO_ROOT:-../..}/demo/src/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+      - ${REPO_ROOT:-../..}/demo/src/grafana/provisioning/datasources/default.yaml:/etc/grafana/provisioning/datasources/default.yaml:ro
+      - ${REPO_ROOT:-../..}/examples/grafana-datasource-thanos.yml:/etc/grafana/provisioning/datasources/anomaly-calculator.yaml:ro
+      - ./grafana-dashboard-provider.yml:/etc/grafana/provisioning/dashboards/anomaly-calculator.yml:ro
+      - ${REPO_ROOT:-../..}/dashboards:/var/lib/grafana/dashboards/anomaly-calculator:ro
+      - ${REPO_ROOT:-../..}/demo/src/grafana/provisioning/dashboards/demo.yaml:/etc/grafana/provisioning/dashboards/demo.yaml:ro
+      - ${REPO_ROOT:-../..}/demo/src/grafana/provisioning/dashboards/demo:/etc/grafana/provisioning/dashboards/demo:ro
+      - ${REPO_ROOT:-../..}/demo/src/grafana/provisioning/dashboards/anomalies.yaml:/etc/grafana/provisioning/dashboards/anomalies.yaml:ro
+      - ${REPO_ROOT:-../..}/demo/src/grafana/provisioning/dashboards/anomalies:/etc/grafana/provisioning/dashboards/anomalies:ro
+    depends_on:
+      - thanos-query
+
+volumes:
+  source-prometheus-data:
+  anomaly-prometheus-a-data:
+  anomaly-prometheus-b-data:

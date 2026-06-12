@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: anomaly-prometheus-a-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 30s
+      evaluation_interval: 1m
+      external_labels:
+        cluster: anomaly-calculator
+        replica: anomaly-prometheus-a
+
+    rule_files:
+      - /etc/prometheus/rules/adaptive.yml
+      - /etc/prometheus/rules/robust.yml
+
+    scrape_configs:
+      - job_name: anomaly-prometheus
+        static_configs:
+          - targets:
+              - localhost:9090
+            labels:
+              prometheus_replica: anomaly-prometheus-a
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: anomaly-prometheus-b-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 30s
+      evaluation_interval: 1m
+      external_labels:
+        cluster: anomaly-calculator
+        replica: anomaly-prometheus-b
+
+    rule_files:
+      - /etc/prometheus/rules/adaptive.yml
+      - /etc/prometheus/rules/robust.yml
+
+    scrape_configs:
+      - job_name: anomaly-prometheus
+        static_configs:
+          - targets:
+              - localhost:9090
+            labels:
+              prometheus_replica: anomaly-prometheus-b
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-anomaly-datasource
+data:
+  anomaly-calculator.yml: |
+    apiVersion: 1
+
+    datasources:
+      - name: Anomaly Calculator
+        type: prometheus
+        access: proxy
+        url: http://thanos-query.anomaly-calculator.svc.cluster.local:10902
+        isDefault: false
+        jsonData:
+          timeInterval: 30s
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: source-prometheus-remote-write-example
+data:
+  remote-write.yml: |
+    remote_write:
+      - url: http://anomaly-prometheus-a:9090/api/v1/write
+        write_relabel_configs:
+          - source_labels: [__name__]
+            regex: "service:http_request_rate5m|service:http_error_rate5m|service:http_latency_p95"
+            action: keep
+          - source_labels: [__name__]
+            regex: "anomaly:.*"
+            action: drop
+
+      - url: http://anomaly-prometheus-b:9090/api/v1/write
+        write_relabel_configs:
+          - source_labels: [__name__]
+            regex: "service:http_request_rate5m|service:http_error_rate5m|service:http_latency_p95"
+            action: keep
+          - source_labels: [__name__]
+            regex: "anomaly:.*"
+            action: drop

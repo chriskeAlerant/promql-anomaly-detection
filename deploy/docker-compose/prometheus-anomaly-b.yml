@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 1m
+  external_labels:
+    cluster: anomaly-calculator
+    replica: anomaly-prometheus-b
+
+rule_files:
+  - /etc/prometheus/rules/adaptive.yml
+  - /etc/prometheus/rules/robust.yml
+  - /etc/prometheus/rules/examples/node_exporter.yml
+  - /etc/prometheus/rules/examples/otel_demo.yml
+  - /etc/prometheus/rules/extra/demo.yml
+
+scrape_configs:
+  - job_name: anomaly-prometheus
+    static_configs:
+      - targets:
+          - localhost:9090
+        labels:
+          prometheus_replica: anomaly-prometheus-b

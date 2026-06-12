@@ -158,21 +158,3 @@ groups:
             "look_back", "1d", "", ""
           )
         )
-
-- name: AnomalyRobustAlerts
-  rules:
-
-    ################################################################
-    #                     Anomalies                                #
-    ################################################################
-
-    # Alert for anomalies based on robust strategy
-    - alert: AnomalyDetected
-      for: 5m
-      expr: >
-        last_over_time(anomaly:level[2m]) < last_over_time(anomaly:lower_band{anomaly_strategy="robust"}[2m])
-        or
-        last_over_time(anomaly:level[2m]) > last_over_time(anomaly:upper_band{anomaly_strategy="robust"}[2m])
-      labels:
-        severity: warning
-        anomaly_strategy: robust
